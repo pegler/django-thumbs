@@ -8,3 +8,4 @@ django_thumbs.egg-info/
 
 .project
 .pydevproject
+.settings/*

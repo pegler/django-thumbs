@@ -57,7 +57,12 @@ def generate_thumb(img, thumb_size, format):
     if format.upper()=='JPG': format = 'JPEG'
     
     image2.save(io, format)
-    return ContentFile(io.getvalue())    
+    return ContentFile(io.getvalue())
+
+def get_thumb_name(name, width, height):
+    split = name.rsplit('.',1)
+    thumb_url = '%s.%sx%s.%s' % (split[0],width,height,split[1])
+    return thumb_url
 
 
 class ImageWithThumbsFieldFile(ImageFieldFile):
@@ -68,27 +73,20 @@ class ImageWithThumbsFieldFile(ImageFieldFile):
         super(ImageWithThumbsFieldFile, self).__init__(*args, **kwargs)
         self.sizes = self.field.sizes
 
-        if self.sizes:
-            def get_size(self, size):
-                if not self:
-                    return ''
-                else:
-                    split = self.url.rsplit('.',1)
-                    thumb_url = '%s.%sx%s.%s' % (split[0],w,h,split[1])
-                    return thumb_url
-
-            for size in self.sizes:
-                (w,h) = size
-                setattr(self, 'url_%sx%s' % (w,h), get_size(self, size))
+        if self.sizes and self.name:
+            for width, height in self.sizes:
+                setattr(self, 'url_%sx%s' % (width,height), get_thumb_name(self.url, width, height))
 
     def save(self, name, content, save=True):
         super(ImageWithThumbsFieldFile, self).save(name, content, save)
 
         if self.sizes:
             for size in self.sizes:
-                (w,h) = size
                 split = self.name.rsplit('.',1)
-                thumb_name = '%s.%sx%s.%s' % (split[0],w,h,split[1])
+                
+                width, height = size
+                
+                thumb_name = get_thumb_name(self.name, width, height)
                 
                 # you can use another thumbnailing function if you like
                 thumb_content = generate_thumb(content, size, split[1])
@@ -99,13 +97,13 @@ class ImageWithThumbsFieldFile(ImageFieldFile):
                     raise ValueError('There is already a file named %s' % thumb_name)
 
     def delete(self, save=True):
-        name=self.name
         super(ImageWithThumbsFieldFile, self).delete(save)
         if self.sizes:
             for size in self.sizes:
-                (w,h) = size
-                split = name.rsplit('.',1)
-                thumb_name = '%s.%sx%s.%s' % (split[0],w,h,split[1])
+                width, height = size
+                
+                thumb_name = get_thumb_name(self.name, width, height)
+                
                 try:
                     self.storage.delete(thumb_name)
                 except:
