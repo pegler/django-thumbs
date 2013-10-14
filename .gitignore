@@ -5,3 +5,6 @@ django_thumbs.egg-info/
 
 # python
 *.pyc
+
+.project
+.pydevproject
