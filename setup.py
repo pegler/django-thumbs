@@ -16,12 +16,12 @@ else: LONG_DESCRIPTION = DESCRIPTION
 
 setup(
     name='django-thumbs',
-    version='1.0.0',
-    install_requires=['django', 'south'],
+    version='1.0.1',
+    install_requires=['django'],
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
-    author='VanNoppen Marketing',
-    author_email='dev@vannoppen.com',
-    url='https://github.com/vannoppen/django-thumbs/',
+    author='Matt Pegler',
+    author_email='matt@pegler.co',
+    url='https://github.com/pegler/django-thumbs/',
     packages=['thumbs'],
 )
