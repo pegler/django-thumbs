@@ -10,7 +10,7 @@ DATABASES = {
 }
 
 INSTALLED_APPS = [
-    'compressor',
+    'thumbs',
 ]
 
 STATIC_URL = '/static/'
