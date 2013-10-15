@@ -20,9 +20,12 @@ from django.core.files.base import ContentFile
 from south.modelsinspector import add_introspection_rules
 from PIL import Image
 try:
-    from cStringIO import StringIO
+    from io import StringIO  # python 3
 except ImportError:
-    from StringIO import StringIO
+    try:  # python 2
+        from cStringIO import StringIO
+    except ImportError:
+        from StringIO import StringIO
 
 
 def generate_thumb(img, thumb_size, format):
