@@ -1,5 +1,7 @@
 # django-thumbs
 
+[![Build Status](https://travis-ci.org/pegler/django-thumbs.png?branch=master)](https://travis-ci.org/pegler/django-thumbs)
+
 This fork of django-thumbs adds several key features:
  - South support
  - A management command to create thumbnails of existing files.  Good if you switch to django-thumbs from a different system, or if you add a new sized thumbnail to the field.
