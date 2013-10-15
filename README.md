@@ -1,6 +1,6 @@
 # django-thumbs
 
-This branch of django-thumbs adds several key features:
+This fork of django-thumbs adds several key features:
  - South support
  - A management command to create thumbnails of existing files.  Good if you switch to django-thumbs from a different system, or if you add a new sized thumbnail to the field.
 
@@ -8,7 +8,7 @@ In progress:
  - Full test coverage
  - Better documentation for use with collectstatic and an S3 storage backend
 
-The original django-thumbs project you can find it on [Google Code][1].
+The original project can be found on [Google Code][1].
 
 [1]: http://code.google.com/p/django-thumbs/ "django-thumbs on Google Code"
 
@@ -24,15 +24,15 @@ versions of all requirements.
 
 ## ImageWithThumbsField Usage
 
-Add an ImageWithThumbsField to your model:
+Add an ImageWithThumbsField field to your model:
 
     photo = ImageWithThumbsField(upload_to='images', sizes=((125,125),(300,200),)
 
-To retrieve image URL, exactly the same way as with ImageField:
+You can retrieve the image URL exactly the same way as with ImageField:
 
     my_object.photo.url
 
-To retrieve thumbnails URL's just add the size to it:
+Thumbnail URLs just have the size appended to it:
 
     my_object.photo.url_125x125
     my_object.photo.url_300x200
