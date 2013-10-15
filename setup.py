@@ -17,7 +17,7 @@ else: LONG_DESCRIPTION = DESCRIPTION
 setup(
     name='django-thumbs',
     version='1.0.1',
-    install_requires=['django'],
+    install_requires=['django','south'],
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     author='Matt Pegler',
