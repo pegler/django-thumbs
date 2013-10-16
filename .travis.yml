@@ -2,8 +2,6 @@ language: python
 python:
   - "2.6"
   - "2.7"
-  - "3.2"
-  - "3.3"
 install:
   - pip install -e .
   - pip install -r requirements/tests.txt Django==$DJANGO
@@ -12,9 +10,5 @@ script:
 env:
   - DJANGO=1.4.8
   - DJANGO=1.5.4
-matrix:
-  exclude:
-    - python: "3.2"
-      env: DJANGO=1.4.8
-    - python: "3.3"
-      env: DJANGO=1.4.8
+after_script:
+  coveralls --verbose
