@@ -1,5 +1,6 @@
 flake8
 django-discover-runner
 coverage
+coveralls
 south
 pillow
