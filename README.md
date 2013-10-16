@@ -1,6 +1,7 @@
 # django-thumbs
 
 [![Build Status](https://travis-ci.org/pegler/django-thumbs.png?branch=master)](https://travis-ci.org/pegler/django-thumbs)
+[![Coverage Status](https://coveralls.io/repos/pegler/django-thumbs/badge.png)](https://coveralls.io/r/pegler/django-thumbs)
 
 This fork of django-thumbs adds several key features:
  - South support
