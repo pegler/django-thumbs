@@ -19,13 +19,13 @@ from django.core.files.base import ContentFile
 
 from south.modelsinspector import add_introspection_rules
 from PIL import Image
-try:
-    from io import StringIO  # python 3
-except ImportError:
+try:  # pragma: nocover
     try:  # python 2
         from cStringIO import StringIO
     except ImportError:
         from StringIO import StringIO
+except ImportError:  # pragma: nocover
+    from io import StringIO  # python 3
 
 
 def generate_thumb(img, thumb_size, format):
@@ -105,7 +105,6 @@ class ImageWithThumbsFieldFile(ImageFieldFile):
                     raise ValueError('There is already a file named %s' % thumb_name)
 
     def delete(self, save=True):
-        super(ImageWithThumbsFieldFile, self).delete(save)
         if self.sizes:
             for size in self.sizes:
                 width, height = size
@@ -116,6 +115,7 @@ class ImageWithThumbsFieldFile(ImageFieldFile):
                     self.storage.delete(thumb_name)
                 except:
                     pass
+        super(ImageWithThumbsFieldFile, self).delete(save)
 
 
 class ImageWithThumbsField(ImageField):

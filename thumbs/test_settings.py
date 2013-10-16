@@ -11,6 +11,7 @@ DATABASES = {
 
 INSTALLED_APPS = [
     'thumbs',
+    'tests',
 ]
 
 STATIC_URL = '/static/'
