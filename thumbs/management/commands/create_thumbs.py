@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
         for content_type in ContentType.objects.all():
             model = content_type.model_class()
-            if not model:  # in case of a stale ContentType
+            if not model:  # pragma: nocover
                 continue
 
             for field in model._meta.fields:
@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 sizes_to_generate = []
                 storage = image.storage
 
-                if not storage.exists(image.name):
+                if not storage.exists(image.name):  # pragma: nocover
                     continue
 
                 for size in image.sizes:
