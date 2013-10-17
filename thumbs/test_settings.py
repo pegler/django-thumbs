@@ -12,6 +12,7 @@ DATABASES = {
 INSTALLED_APPS = [
     'thumbs',
     'tests',
+    'django.contrib.contenttypes',
 ]
 
 STATIC_URL = '/static/'
