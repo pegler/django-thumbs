@@ -42,11 +42,11 @@ def generate_thumb(img, thumb_size, format):
         pass
     else:
         if orientation:
-            if exif[orientation] == 3:
+            if exif.get(orientation) == 3:
                 image = image.rotate(180, expand=True)
-            elif exif[orientation] == 6:
+            elif exif.get(orientation) == 6:
                 image = image.rotate(270, expand=True)
-            elif exif[orientation] == 8:
+            elif exif.get(orientation) == 8:
                 image = image.rotate(90, expand=True)
 
     # Convert to RGB if necessary
