@@ -18,7 +18,7 @@ from django.db.models.fields.files import ImageFieldFile
 from django.core.files.base import ContentFile
 
 from south.modelsinspector import add_introspection_rules
-from PIL import Image
+from PIL import Image, ExifTags
 try:  # pragma: nocover
     try:  # python 2
         from cStringIO import StringIO
@@ -31,6 +31,23 @@ except ImportError:  # pragma: nocover
 def generate_thumb(img, thumb_size, format):
     img.seek(0)  # see http://code.djangoproject.com/ticket/8222 for details
     image = Image.open(img)
+
+    orientation = None
+    for orientation in ExifTags.TAGS.keys():
+        if ExifTags.TAGS[orientation] == 'Orientation':
+            break
+    try:
+        exif = dict(image._getexif().items())
+    except AttributeError:
+        pass
+    else:
+        if orientation:
+            if exif[orientation] == 3:
+                image = image.rotate(180, expand=True)
+            elif exif[orientation] == 6:
+                image = image.rotate(270, expand=True)
+            elif exif[orientation] == 8:
+                image = image.rotate(90, expand=True)
 
     # Convert to RGB if necessary
     if image.mode not in ('L', 'RGB'):
