@@ -76,9 +76,12 @@ def generate_thumb(img, thumb_size, format):
         image2.thumbnail(thumb_size, Image.ANTIALIAS)
 
     io = StringIO()
+    # PNG and GIF are the same, JPG is JPEG
+    if format.upper() == 'JPG':
+        format = 'JPEG'
     info = image2.info
 
-    image2.save(io, **info)
+    image2.save(io, format, **info)
     return ContentFile(io.getvalue())
 
 
