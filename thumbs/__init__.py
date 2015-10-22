@@ -50,7 +50,7 @@ def generate_thumb(img, thumb_size, format):
                 image = image.rotate(90, expand=True)
 
     # Convert to RGB if necessary
-    if image.mode not in ('L', 'RGB'):
+    if image.mode not in ('L', 'RGB', 'RGBA'):
         image = image.convert('RGB')
 
     # get size
