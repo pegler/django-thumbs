@@ -28,7 +28,7 @@ except ImportError:  # pragma: nocover
     from io import StringIO  # python 3
 
 
-def generate_thumb(img, thumb_size, format):
+def generate_thumb(img, thumb_size):
     img.seek(0)  # see http://code.djangoproject.com/ticket/8222 for details
     image = Image.open(img)
 
@@ -76,9 +76,7 @@ def generate_thumb(img, thumb_size, format):
         image2.thumbnail(thumb_size, Image.ANTIALIAS)
 
     io = StringIO()
-    # PNG and GIF are the same, JPG is JPEG
-    if format.upper() == 'JPG':
-        format = 'JPEG'
+    format = image.format or 'jpeg'
     info = image2.info
 
     image2.save(io, format, **info)
@@ -87,7 +85,10 @@ def generate_thumb(img, thumb_size, format):
 
 def get_thumb_name(name, width, height):
     split = name.rsplit('.', 1)
-    thumb_url = '%s.%sx%s.%s' % (split[0], width, height, split[1])
+    if len(split) == 2:
+        thumb_url = '%s.%sx%s.%s' % (split[0], width, height, split[1])
+    else:
+        thumb_url = '%s.%sx%s' % (split[0], width, height)
     return thumb_url
 
 
@@ -108,14 +109,12 @@ class ImageWithThumbsFieldFile(ImageFieldFile):
 
         if self.sizes:
             for size in self.sizes:
-                split = self.name.rsplit('.', 1)
-
                 width, height = size
 
                 thumb_name = get_thumb_name(self.name, width, height)
 
                 # you can use another thumbnailing function if you like
-                thumb_content = generate_thumb(content, size, split[1])
+                thumb_content = generate_thumb(content, size)
 
                 thumb_name_ = self.storage.save(thumb_name, thumb_content)
 

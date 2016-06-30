@@ -40,9 +40,8 @@ class Command(BaseCommand):
                 if sizes_to_generate:
                     image_file = image.file
 
-                    ext = image.name.rsplit('.', 1)[1]
                     for size in sizes_to_generate:
                         width, height = size
-                        thumb_content = generate_thumb(image_file, size, ext)
+                        thumb_content = generate_thumb(image_file, size)
                         thumb_name = get_thumb_name(image.name, width, height)
                         image.storage.save(thumb_name, thumb_content)
