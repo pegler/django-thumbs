@@ -28,31 +28,13 @@ except ImportError:  # pragma: nocover
     from io import StringIO  # python 3
 
 
-# From: https://gist.github.com/olooney/1601455
-class Size(object):
-    def __init__(self, pair):
-        self.width = float(pair[0])
-        self.height = float(pair[1])
-
-    @property
-    def aspect_ratio(self):
-        return self.width / self.height
-
-    @property
-    def size(self):
-        return flat(self.width, self.height)
-
-def flat( *nums ):
-    'Build a tuple of ints from float or integer arguments. Useful because PIL crop and resize require integer points.'
-    return tuple( int(round(n)) for n in nums )
-
 def generate_thumb(img, thumb_size):
     img.seek(0)  # see http://code.djangoproject.com/ticket/8222 for details
     image = Image.open(img)
     orientation = None
-    for _orientation in ExifTags.TAGS.keys():
-        if ExifTags.TAGS[_orientation] == 'Orientation':
-            orientation = _orientation
+    for orientation in ExifTags.TAGS.keys():
+        if ExifTags.TAGS[orientation] == 'Orientation':
+            break
     try:
         exif = dict(image._getexif().items())
     except AttributeError:
@@ -68,25 +50,20 @@ def generate_thumb(img, thumb_size):
     # Convert to RGB if necessary
     if image.mode not in ('L', 'RGB', 'RGBA'):
         image = image.convert('RGB')
-    original = Size(image.size)
-    target = Size(thumb_size)
-    if target.aspect_ratio > original.aspect_ratio:
-        # image is too tall: take some off the top and bottom
-        scale_factor = target.width / original.width
-        crop_size = Size( (original.width, target.height / scale_factor) )
-        top_cut_line = (original.height - crop_size.height) / 2
-        image = image.crop( flat(0, top_cut_line, crop_size.width, top_cut_line + crop_size.height) )
-    elif target.aspect_ratio < original.aspect_ratio:
-        # image is too wide: take some off the sides
-        scale_factor = target.height / original.height
-        crop_size = Size( (target.width/scale_factor, original.height) )
-        side_cut_line = (original.width - crop_size.width) / 2
-        image = image.crop( flat(side_cut_line, 0,  side_cut_line + crop_size.width, crop_size.height) )
-    image = image.resize(target.size, Image.ANTIALIAS)
+    # get size
+    max_thumb_w, max_thumb_h = thumb_size
+    image_w, image_h = image.size
+    maxratio = min(float(max_thumb_w) / image_w, float(max_thumb_h) / image_h)
+    thumb_w = int(image_w * maxratio)
+    thumb_h = int(image_h * maxratio)
+    image2 = image.resize((thumb_w, thumb_h))
     io = StringIO()
-    format = image.format or 'JPEG'
-    info = image.info
-    image.save(io, format, **info)
+    if image.format == 'JPEG':
+        format = 'JPEG'
+    else:
+        format = 'PNG'
+    info = image2.info
+    image2.save(io, format, **info)
     return ContentFile(io.getvalue())
 
 
