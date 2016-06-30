@@ -27,10 +27,10 @@ TEMPLATE_DIRS = (
     os.path.join(TEST_DIR, 'test_templates'),
 )
 
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
-
 SECRET_KEY = "t^#8f6+=ggup#uiqfl1nt%=(s8^x^z%bv&a-ui(cxsaz98krrf"
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
 )
+
+MIDDLEWARE_CLASSES = ()

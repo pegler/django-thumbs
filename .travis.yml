@@ -8,7 +8,8 @@ install:
 script:
   - make test
 env:
-  - DJANGO=1.4.8
-  - DJANGO=1.5.4
+  - DJANGO=1.7.11
+  - DJANGO=1.8.13
+  - DJANGO=1.9.7
 after_script:
   coveralls --verbose
