@@ -28,14 +28,31 @@ except ImportError:  # pragma: nocover
     from io import StringIO  # python 3
 
 
+# From: https://gist.github.com/olooney/1601455
+class Size(object):
+    def __init__(self, pair):
+        self.width = float(pair[0])
+        self.height = float(pair[1])
+
+    @property
+    def aspect_ratio(self):
+        return self.width / self.height
+
+    @property
+    def size(self):
+        return flat(self.width, self.height)
+
+def flat( *nums ):
+    'Build a tuple of ints from float or integer arguments. Useful because PIL crop and resize require integer points.'
+    return tuple( int(round(n)) for n in nums )
+
 def generate_thumb(img, thumb_size):
     img.seek(0)  # see http://code.djangoproject.com/ticket/8222 for details
     image = Image.open(img)
-
     orientation = None
-    for orientation in ExifTags.TAGS.keys():
-        if ExifTags.TAGS[orientation] == 'Orientation':
-            break
+    for _orientation in ExifTags.TAGS.keys():
+        if ExifTags.TAGS[_orientation] == 'Orientation':
+            orientation = _orientation
     try:
         exif = dict(image._getexif().items())
     except AttributeError:
@@ -48,38 +65,27 @@ def generate_thumb(img, thumb_size):
                 image = image.rotate(270, expand=True)
             elif exif.get(orientation) == 8:
                 image = image.rotate(90, expand=True)
-
     # Convert to RGB if necessary
     if image.mode not in ('L', 'RGB', 'RGBA'):
         image = image.convert('RGB')
-
-    # get size
-    thumb_w, thumb_h = thumb_size
-    # If you want to generate a square thumbnail
-    if thumb_w == thumb_h:
-        # quad
-        xsize, ysize = image.size
-        # get minimum size
-        minsize = min(xsize, ysize)
-        # largest square possible in the image
-        xnewsize = (xsize - minsize) / 2
-        ynewsize = (ysize - minsize) / 2
-        # crop it
-        image2 = image.crop((xnewsize, ynewsize, xsize - xnewsize, ysize - ynewsize))
-        # load is necessary after crop
-        image2.load()
-        # thumbnail of the cropped image (with ANTIALIAS to make it look better)
-        image2.thumbnail(thumb_size, Image.ANTIALIAS)
-    else:
-        # not quad
-        image2 = image
-        image2.thumbnail(thumb_size, Image.ANTIALIAS)
-
+    original = Size(image.size)
+    target = Size(thumb_size)
+    if target.aspect_ratio > original.aspect_ratio:
+        # image is too tall: take some off the top and bottom
+        scale_factor = target.width / original.width
+        crop_size = Size( (original.width, target.height / scale_factor) )
+        top_cut_line = (original.height - crop_size.height) / 2
+        image = image.crop( flat(0, top_cut_line, crop_size.width, top_cut_line + crop_size.height) )
+    elif target.aspect_ratio < original.aspect_ratio:
+        # image is too wide: take some off the sides
+        scale_factor = target.height / original.height
+        crop_size = Size( (target.width/scale_factor, original.height) )
+        side_cut_line = (original.width - crop_size.width) / 2
+        image = imgage.crop( flat(side_cut_line, 0,  side_cut_line + crop_size.width, crop_size.height) )
     io = StringIO()
     format = image.format or 'jpeg'
-    info = image2.info
-
-    image2.save(io, format, **info)
+    info = image.info
+    image.save(io, format, **info)
     return ContentFile(io.getvalue())
 
 
