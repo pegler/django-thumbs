@@ -84,7 +84,7 @@ def generate_thumb(img, thumb_size):
         image = imgage.crop( flat(side_cut_line, 0,  side_cut_line + crop_size.width, crop_size.height) )
     image = imgage.resize(target.size, Image.ANTIALIAS)
     io = StringIO()
-    format = image.format or 'jpeg'
+    format = image.format or 'JPEG'
     info = image.info
     image.save(io, format, **info)
     return ContentFile(io.getvalue())
