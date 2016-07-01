@@ -56,7 +56,7 @@ def generate_thumb(img, thumb_size):
     maxratio = min(float(max_thumb_w) / image_w, float(max_thumb_h) / image_h)
     thumb_w = int(image_w * maxratio)
     thumb_h = int(image_h * maxratio)
-    image2 = image.resize((thumb_w, thumb_h))
+    image2 = image.resize((thumb_w, thumb_h), Image.BICUBIC)
     io = StringIO()
     if image.format == 'JPEG':
         format = 'JPEG'
