@@ -17,7 +17,6 @@ from django.db.models import ImageField
 from django.db.models.fields.files import ImageFieldFile
 from django.core.files.base import ContentFile
 
-from south.modelsinspector import add_introspection_rules
 from PIL import Image, ExifTags
 try:  # pragma: nocover
     try:  # python 2
@@ -131,8 +130,3 @@ class ImageWithThumbsField(ImageField):
         self.sizes = sizes
         super(ImageField, self).__init__(**kwargs)
 
-
-add_introspection_rules(
-    [([ImageWithThumbsField], [], {"sizes": ["sizes", {}]})],
-    ["^thumbs\.ImageWithThumbsField"]
-)
